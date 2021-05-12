@@ -28,53 +28,68 @@ const initialValues={
 export default function PhoneAddressForm(props) {
     const classes = useStyles();
     const { addOrEdit, recordForEdit } = props
+    const {values,setValues,handleInput,errors,setErrors}=useForm(initialValues)
+    const [phoneValue,setPhoneValue]=useState()
+
 
     const validate=()=>{
-        console.log(phoneValue)
         let temp=[]
-        if(phoneValue!== 0){
+        if(phoneValue!== undefined || phoneValue===''){
         temp.firstName=values.firstName?"":"This field Cannot be Empty"
         temp.lastName=values.lastName?"":"This field Cannot be Empty"
+        temp.phoneNumber=phoneValue?"":"This field cannot be Empty"
         temp.phoneNumber=isValidPhoneNumber(phoneValue)?"":"Invalid Number"
         setErrors({
             ...temp
         })
        }
-       else{
+       else if(phoneValue===undefined && values.phoneNumber===undefined){
          temp.phoneNumber="This field Cannot be Empty"
          setErrors({
             ...temp
         })
        }
+       else if(values.phoneNumber!==''){
+           temp.phoneNumber=isValidPhoneNumber(values.phoneNumber)?"":"Invalid Number"
+           setErrors({
+            ...temp
+           })
+       }
         return Object.values(temp).every(x => x=== "")
     }
 
-    const {values,setValues,handleInput,errors,setErrors}=useForm(initialValues)
-    const [phoneValue,setPhoneValue]=useState(0)
-
+    
     useEffect(() => {
-        console.log(recordForEdit)
         if (recordForEdit != null)
             setValues({
                 ...recordForEdit
             })
+            
     }, [recordForEdit])
+
 
     const handleSubmit=e=>{
         e.preventDefault()
-        
+        //console.log(values)
+        if(phoneValue !== undefined){
         if (validate()){
             const phoneNumber = parsePhoneNumber(phoneValue)
-        const data={
+            const data={
             firstName:values.firstName,
             lastName:values.lastName,
             phoneNumber:phoneValue,
             extension:phoneNumber.country
-        }
-            //phoneService.insertContact(data)
+            }
             if(props.addOrEdit){
-                console.log(values)
-                addOrEdit(values);
+                const data1={
+                    firstName:values.firstName,
+                    lastName:values.lastName,
+                    phoneNumber:phoneValue,
+                    extension:phoneNumber.country,
+                    id:values.id
+                    }
+                //console.log(data1)
+                addOrEdit(data1);
             }
             else{
                 phoneService.insertContact(data)
@@ -83,19 +98,42 @@ export default function PhoneAddressForm(props) {
             window.location.href='/'
             
         }
+    }else{
+        if(validate()){
+            const phoneNumber = parsePhoneNumber(values.phoneNumber)
+            const data1={
+                firstName:values.firstName,
+                lastName:values.lastName,
+                phoneNumber:values.phoneNumber,
+                extension:phoneNumber.country,
+                id:values.id
+                }
+            addOrEdit(data1);
+        }
+        
+
+    }
         
     }
     
 
     const handleReset=()=>{
-        setValues(initialValues)
-        setPhoneValue('')
-        setErrors({})
+        //console.log(values.id)
+        if(values.id  !== undefined){
+            setValues({firstName:'',lastName:'',phoneNumber:'',id:values.id})
+            setPhoneValue('')
+            setErrors({})
+        }
+        else{
+            setValues({firstName:'',lastName:'',phoneNumber:''})
+            setPhoneValue('')
+            setErrors({})
+        }
+        
     }
-
-
     
     return (
+        
         <form className={classes.root} noValidate autoComplete="off">
            <TextField id="outlined-basic" label="First Name" variant="outlined" value={values.firstName} name="firstName" onChange={handleInput} error={errors.firstName?true:false} helperText={errors.firstName} />
            <TextField id="outlined-basic" label="Second Name" variant="outlined" value={values.lastName} name="lastName" onChange={handleInput}  error={errors.lastName?true:false} helperText={errors.lastName}/>

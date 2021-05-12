@@ -32,6 +32,7 @@ export function deleteContact(id) {
 }
 
 export function updateContacts(data) {
+    console.log(data)
     let contacts = getAllContacts();
     let recordIndex = contacts.findIndex(x => x.id === data.id);
     contacts[recordIndex] = { ...data }

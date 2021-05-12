@@ -75,24 +75,27 @@ export default function Contact() {
     //console.log(records)
 
     const openInPopup = row => {
-      console.log(row)
+      //console.log(row)
       setRecordForEdit(row)
       setOpenPopup(true)
   }
 
   const addOrEdit = (contact, resetForm) => {
+    console.log(contact.id)
     if (contact.id === 0)
         phoneService.insertContact(contact)
-    else
+    else{
+        console.log(contact)
         phoneService.updateContacts(contact)
+    }
     setRecordForEdit(null)
     setOpenPopup(false)
     setRecords(phoneService.getAllContacts())
     setNotify({
-      isOpen: true,
-      message: 'Submitted Successfully',
-      type: 'success'
-  })
+       isOpen: true,
+       message: 'Submitted Successfully',
+       type: 'success'
+    })
 }
 
     return (
