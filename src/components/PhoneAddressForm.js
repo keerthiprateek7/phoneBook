@@ -50,8 +50,10 @@ export default function PhoneAddressForm(props) {
         })
        }
        else if(values.phoneNumber!==''){
-           temp.phoneNumber=isValidPhoneNumber(values.phoneNumber)?"":"Invalid Number"
-           setErrors({
+        temp.firstName=values.firstName?"":"This field Cannot be Empty"
+        temp.lastName=values.lastName?"":"This field Cannot be Empty"
+        temp.phoneNumber=isValidPhoneNumber(values.phoneNumber)?"":"Invalid Number"
+        setErrors({
             ...temp
            })
        }
